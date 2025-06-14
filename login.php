@@ -1,11 +1,4 @@
 <?php
-    if (session_status() == 2) {
-        session_destroy();
-        session_start();
-        session_create_id();
-    }
-    else {
-        session_start();
 require_once __DIR__ . '/bootstrap.php';
 
 if (session_status() == 2) {
@@ -20,6 +13,7 @@ if (session_status() == 2) {
         exit();
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="de">

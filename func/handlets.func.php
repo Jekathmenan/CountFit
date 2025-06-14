@@ -1,4 +1,8 @@
 <?php
+
+use CountFit\Models\TrainingSession;
+
+require_once __DIR__ . '/../bootstrap.php';
 session_start();
 error_reporting(0);
 if (!isset($_SESSION['userId'])) {
