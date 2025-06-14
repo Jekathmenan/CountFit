@@ -1,0 +1,23 @@
+Error codes
+	150  = id and exid are not set 
+	1520 = weight or reps is not set
+	1530 = weight or reps is not a number
+	1550 = weight and reps are 0
+	1560 = weight is 0
+	1570 = reps is 0
+	1580 = insert error
+	2210 = sql error
+	3050 = trainingsession name or button not set
+
+Success codes
+	4040 = Inserted set successfully
+	4050 = Connected user successfully to trainingsession
+
+Other codes
+	901 = return to mainpage with code 4040
+	902 = user is already connected to 
+
+
+
+
+

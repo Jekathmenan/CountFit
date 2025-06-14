@@ -1,0 +1,102 @@
+.login-box {
+  width: 100%;
+  background: #3a4750;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+input {
+  border-radius: 25px;
+  border: 1px solid #303841;
+  text-align: center;
+}
+
+.sign-in {
+  background: #303841;
+  border: 1px solid #3a4750;
+  border-radius: 25px;
+  color: white;
+  font-size: 14px;
+}
+
+.sign-in:hover {
+  background: #00adb5;
+  border: 1.5px solid #303841;
+  font-size: 15px;
+  transition: all 0.45s;
+}
+
+.create-acc {
+  font-size: 12px;
+  margin: 8px 0;
+}
+
+.create-acc a {
+  text-decoration: none;
+  color: #00adb5;
+}
+
+.create-acc a:hover {
+  text-decoration: underline;
+  font-size: 12.5px;
+  transition: all 0.2s;
+}
+
+.title {
+  margin: 12px 0;
+}
+
+@media all and (min-width: 560px) {
+  body,
+  main {
+    height: 100vh;
+  }
+
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-box {
+    width: 45%;
+    background: #3a4750;
+    height: 300px;
+  }
+
+  input,
+  .sign-in {
+    margin: 5px 0;
+    width: 250px;
+    height: 24px;
+  }
+}
+
+@media all and (min-width: 800px) {
+  .login-box {
+    width: 38%;
+    height: 300px;
+  }
+
+  input,
+  .sign-in {
+    width: 300px;
+    height: 30px;
+  }
+}
+
+@media all and (min-width: 1500px) {
+  .login-box {
+    width: 30%;
+    height: 300px;
+  }
+
+  input,
+  .sign-in {
+    width: 350px;
+    height: 33px;
+  }
+}

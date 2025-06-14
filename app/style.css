@@ -1,0 +1,13 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  width: 100%;
+  background: #303841;
+  color: #eeeeee;
+  font-family: "verdana";
+  min-height: 100vh;
+}

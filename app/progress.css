@@ -1,0 +1,34 @@
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+table {
+  color: #588c7e;
+  font-size: 12px;
+  text-align: left;
+}
+th {
+  background-color: #3a4750;
+  color: white;
+}
+tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+@media all and (min-width: 560px) {
+  table {
+    /*border-collapse: collapse;*/
+    width: 100%;
+    color: #588c7e;
+    font-size: 14px;
+    text-align: left;
+  }
+  th {
+    background-color: #588c7e;
+    color: white;
+  }
+  tr:nth-child(odd) {
+    background-color: #f2f2f2;
+  }
+}
