@@ -6,8 +6,20 @@
     }
     else {
         session_start();
+require_once __DIR__ . '/bootstrap.php';
+
+if (session_status() == 2) {
+    session_destroy();
+    session_start();
+    session_create_id();
+} else {
+    session_start();
+    // redirect user to home page if user is logged in
+    if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+        header('Location: ' . BASE_URL . '/app/index.php');
+        exit();
     }
-	
+}
 ?>
 <!DOCTYPE html>
 <html lang="de">

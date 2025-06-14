@@ -1,0 +1,10 @@
+{
+    "name": "jekat/count-fit",
+    "type": "n",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "CountFit\\": "app/"
+        }
+    }
+}
