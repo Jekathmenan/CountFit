@@ -100,4 +100,23 @@ class Bodypart
             throw $ex;
         }
     }
+    /**
+     * 
+     * Returns Bodypart by name
+     * 
+     */
+    public static function getBodypartById(int $id): ?Bodypart
+    {
+        $bodypart = self::getAllBodyparts();
+
+        if ($bodypart === null) {
+            return null;
+        }
+        // get first Bodypart with given Name
+        $bpById = array_filter($bodypart, function ($bp) use ($id) {
+            return $bp->bodypartId === $id;
+        });
+
+        return reset($bpById) ?: null;
+    }
 }
