@@ -119,4 +119,30 @@ class Bodypart
 
         return reset($bpById) ?: null;
     }
+
+    /**
+     * @return Bodypart
+     * Returns Bodypart by name
+     * 
+     */
+    public static function getBodypartByName(string $name): ?Bodypart
+    {
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
+        }
+
+        $bodyparts = self::getAllBodyparts();
+
+        if ($bodyparts === null) {
+            return null;
+        }
+
+        // get first Bodypart with given Name
+        // Maybe move this to db, by implementing this filter via sql-filter?
+        $bpByName = array_filter($bodyparts, function ($bp) use ($name) {
+            return $bp->bodypartName === strtoupper($name);
+        });
+
+        return reset($bpByName) ?: null;
+    }
 }
