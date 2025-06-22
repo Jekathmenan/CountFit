@@ -32,6 +32,29 @@ class Bodypart
         $this->bodypartName = $bodypartName;
         $this->bodypartDesc = $bodypartDesc;
     }
+
+    /**
+     * Handles Bodypart-Creation logic
+     * 
+     * Creates Bodypart and connects it to TrainingSession
+     * 
+     */
+    public function createBodypart()
+    {
+        // Find this Bodypart in the database and bind it to this class
+        $bpConnected = $this->bindThisBodyPart(name: $this->bodypartName);
+
+        if (!$bpConnected) {
+            // Store Bodypart in DB, if it exists
+            $this->save();
+        }
+
+        // Connect bp to ts
+        if (!$this->isConnectedToTrainingSession()) {
+            $this->connectToTrainingSession();
+        }
+    }
+
     /**
      * 
      * Stores current properties to Bodypart table
@@ -72,6 +95,34 @@ class Bodypart
 
         return $ret;
     }
+
+    /**
+     * 
+     * Helper function to connect Bodypart to User --> Inserts userId and tsId into connector table users2trainingsession.
+     * 
+     */
+    private function connectToTrainingSession()
+    {
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
+        }
+
+        try {
+
+            $stmt = self::$pdo->prepare("INSERT INTO trainingsession2bodypart (usersId, tsId, bodypartId) VALUES (:usersId, :tsId, :bodypartId)");
+            //echo 'User Id: ' . $_SESSION['userId'] . ' TrainingSession Id: ' . $_SESSION['ts_Id'] . ' Bodypart Id: ' . $this->bodypartId . '</br>';
+            $stmt->execute([
+                ':usersId' => $_SESSION['userId'],
+                ':tsId' => $_SESSION['ts_Id'],
+                ':bodypartId' => $this->bodypartId
+            ]);
+        } catch (PDOException $ex) {
+            if (error_reporting() & E_ALL) {
+                echo 'Error connecting Bodypart to Trainingsession ' . $ex->getMessage() . '</br>';
+            }
+        }
+    }
+
     /**
      * 
      * Helper function to check if Bodypart is connected to TrainingSession
