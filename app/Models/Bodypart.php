@@ -32,4 +32,44 @@ class Bodypart
         $this->bodypartName = $bodypartName;
         $this->bodypartDesc = $bodypartDesc;
     }
+    /**
+     * 
+     * Stores current properties to Bodypart table
+     * 
+     */
+    public function save(): bool
+    {
+        $ret = false;
+
+
+        if ($this->bodypartName === null) {
+            // Log Error
+            return false;
+        }
+
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
+        }
+
+        try {
+            $stmt = self::$pdo->prepare("INSERT INTO bodyparts (bodypartName, bodypartDesc) VALUES (:bodypartName, :bodypartDesc)");
+            $stmt->execute([
+                ':bodypartName' => $this->bodypartName,
+                ':bodypartDesc' => $this->bodypartDesc
+            ]);
+
+            echo 'Saving bodyport to DB ' . $this->bodypartName . ' ' . $this->bodypartId . '</br>';
+            $lastId = self::$pdo->lastInsertId();
+            $this->bodypartId = (int) $lastId;
+
+            $ret = true;
+        } catch (PDOException $ex) {
+            // Implement a singleton Class Logger and log the errors there.
+            if (error_reporting() & E_ALL) {
+                echo 'Error saving bodypart to DB ' . $ex->getMessage() . '</br>';
+            }
+        }
+
+        return $ret;
+    }
 }
