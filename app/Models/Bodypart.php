@@ -72,4 +72,32 @@ class Bodypart
 
         return $ret;
     }
+    /**
+     * 
+     * Helper function to check if Bodypart is connected to TrainingSession
+     */
+    private function isConnectedToTrainingSession(): bool
+    {
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
+        }
+
+        try {
+            $stmt = self::$pdo->prepare("SELECT count(*) FROM trainingsession2bodypart WHERE usersID = :usersId and tsID = :tsId and bodypartId = :bodypartId");
+            $stmt->execute([
+                ':usersId' => $_SESSION['userId'],
+                ':tsId' => $_SESSION['ts_Id'],
+                ':bodypartId' => $this->bodypartId
+            ]);
+
+
+            $count = $stmt->fetchColumn();
+            return ($count > 0);
+        } catch (PDOException $ex) {
+            if (error_reporting() & E_ALL) {
+                echo 'Some error occured while checking if Bodypart is connected to TrainingSession: ' . $ex->getMessage() . '</br>';
+            }
+            throw $ex;
+        }
+    }
 }
