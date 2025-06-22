@@ -145,4 +145,32 @@ class Bodypart
 
         return reset($bpByName) ?: null;
     }
+
+    /**
+     * @return Bodypart[]
+     */
+    public static function getAllBodyparts(): ?array
+    {
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
+        }
+        try {
+            $stmt = self::$pdo->prepare("SELECT bodypartID, bodypartName, bodypartDesc FROM bodyparts");
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $bodyparts = [];
+
+            foreach ($results as $row) {
+                $bodyparts[] = new Bodypart(bodypartId: $row['bodypartID'], bodypartName: $row['bodypartName'], bodypartDesc: $row['bodypartDesc']);
+            }
+
+            return $bodyparts;
+        } catch (PDOException $ex) {
+            if (error_reporting() & E_ALL) {
+                echo 'Encountered error while reading all Bodyparts ' . $ex->getMessage();
+            }
+
+            return null;
+        }
+    }
 }
