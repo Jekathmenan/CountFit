@@ -173,4 +173,67 @@ class Bodypart
             return null;
         }
     }
+
+    /**
+     * @return TrainingSession[]
+     */
+    public static function getCurrentUsersBodyparts(): ?array
+    {
+        if (self::$pdo === null) {
+            // establish Database Connection
+            self::$pdo = DBConnection::getInstance();
+        }
+
+        try {
+            $stmt = self::$pdo->prepare("SELECT ts.tsID, ts.tsName, ts.tsDesc FROM trainingsession ts LEFT JOIN users2trainingsession uts ON ts.tsID = uts.tsId AND uts.usersID = :usersId");
+            $stmt->execute([
+                ':usersId' => $_SESSION['userId']
+            ]);
+
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // echo ' Current Users TrainingSessions' . count($results);
+            $trainingSessions = [];
+            foreach ($results as $row) {
+                $trainingSessions[] = new TrainingSession(tsId: $row['tsID'], tsName: $row['tsName'], tsDesc: $row['tsDesc']);
+            }
+
+            return $trainingSessions;
+        } catch (PDOException $ex) {
+            if (error_reporting() & E_ALL) {
+                echo 'Encountered error while reading all TrainingSessions ' . $ex->getMessage();
+            }
+
+            return null;
+        }
+    }
+
+    public static function getAllRelevant(): ?array
+    {
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
+        }
+
+        try {
+            $stmt = self::$pdo->prepare("SELECT bp.* FROM bodyparts bp LEFT JOIN trainingsession2bodypart tbp ON bp.bodypartId = tbp.bodypartId WHERE usersId = :usersId AND tsId = :tsId;");
+            $stmt->execute([
+                ':usersId' => $_SESSION['userId'],
+                ':tsId' => $_SESSION['ts_Id']
+            ]);
+
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $bodyparts = [];
+            foreach ($results as $row) {
+                $bodyparts[] = new Bodypart(bodypartId: $row['bodypartId'], bodypartName: $row['bodypartName'], bodypartDesc: $row['bodypartDesc']);
+            }
+
+            return $bodyparts;
+        } catch (PDOException $ex) {
+            if (error_reporting() & E_ALL) {
+                echo 'Encountered error while reading all Exercises ' . $ex->getMessage();
+            }
+
+            return null;
+        }
+    }
 }
