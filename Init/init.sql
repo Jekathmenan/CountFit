@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 14, 2025 at 01:18 PM
+-- Generation Time: Jun 22, 2025 at 12:19 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,7 +42,8 @@ CREATE TABLE `bodyparts` (
 CREATE TABLE `bodyparts2exercise` (
   `bp2exerId` int(11) NOT NULL,
   `bodypartID` int(11) NOT NULL,
-  `exerciseId` int(11) NOT NULL
+  `exerciseId` int(11) NOT NULL,
+  `usersId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -137,7 +138,8 @@ ALTER TABLE `bodyparts`
 ALTER TABLE `bodyparts2exercise`
   ADD PRIMARY KEY (`bp2exerId`),
   ADD KEY `bodypartID` (`bodypartID`),
-  ADD KEY `exerciseId` (`exerciseId`);
+  ADD KEY `exerciseId` (`exerciseId`),
+  ADD KEY `usersId` (`usersId`);
 
 --
 -- Indexes for table `exercises`
@@ -187,10 +189,52 @@ ALTER TABLE `users2trainingsession`
 --
 
 --
+-- AUTO_INCREMENT for table `bodyparts`
+--
+ALTER TABLE `bodyparts`
+  MODIFY `bodypartId` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bodyparts2exercise`
+--
+ALTER TABLE `bodyparts2exercise`
+  MODIFY `bp2exerId` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `exercises`
+--
+ALTER TABLE `exercises`
+  MODIFY `exerciseId` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `sets`
 --
 ALTER TABLE `sets`
   MODIFY `setID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `trainingsession`
+--
+ALTER TABLE `trainingsession`
+  MODIFY `tsID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `trainingsession2bodypart`
+--
+ALTER TABLE `trainingsession2bodypart`
+  MODIFY `tsbpID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `idUsers` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users2trainingsession`
+--
+ALTER TABLE `users2trainingsession`
+  MODIFY `users2tsID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -201,7 +245,8 @@ ALTER TABLE `sets`
 --
 ALTER TABLE `bodyparts2exercise`
   ADD CONSTRAINT `bodyparts2exercise_ibfk_1` FOREIGN KEY (`bodypartID`) REFERENCES `bodyparts` (`bodypartId`),
-  ADD CONSTRAINT `bodyparts2exercise_ibfk_2` FOREIGN KEY (`exerciseId`) REFERENCES `exercises` (`exerciseId`);
+  ADD CONSTRAINT `bodyparts2exercise_ibfk_2` FOREIGN KEY (`exerciseId`) REFERENCES `exercises` (`exerciseId`),
+  ADD CONSTRAINT `bodyparts2exercise_ibfk_3` FOREIGN KEY (`usersId`) REFERENCES `users` (`idUsers`);
 
 --
 -- Constraints for table `sets`
