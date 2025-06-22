@@ -8,7 +8,6 @@ namespace CountFit\Models;
 use CountFit\Database\DBConnection;
 use PDO;
 use PDOException;
-use Transliterator;
 
 class TrainingSession
 {
@@ -42,16 +41,8 @@ class TrainingSession
      */
     public function createTrainingSession()
     {
-        if ($this->tsName == null) {
-            // Log that Name is null
-            if (error_reporting() & E_ALL) {
-                echo 'Training session name is null </br>';
-            }
-        }
-
         // Check if Training Session exists
         $userBound = $this->bindThisTrainingSession(name: $this->tsName);
-
 
         if (!$userBound) {
             // Store Training Session in DB, if it exists
@@ -72,9 +63,13 @@ class TrainingSession
      */
     public function save(): bool
     {
-        $ret = false;
         if ($this->tsName === null) {
             // Log Error
+            return false;
+        }
+
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
         }
 
         try {
@@ -88,15 +83,15 @@ class TrainingSession
             $lastId = self::$pdo->lastInsertId();
             $this->tsId = (int) $lastId;
 
-            $ret = true;
+            return  true;
         } catch (PDOException $ex) {
             // Implement a singleton Class Logger and log the errors there.
             if (error_reporting() & E_ALL) {
                 echo 'Error saving user to DB ' . $ex->getMessage() . '</br>';
             }
-        }
 
-        return $ret;
+            return false;
+        }
     }
 
     /**
@@ -106,7 +101,10 @@ class TrainingSession
      */
     private function connectToUser()
     {
-        echo 'Connecting user </br>';
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
+        }
+
         try {
 
             $stmt = self::$pdo->prepare("INSERT INTO users2trainingsession (usersId, tsId) VALUES (:usersId, :tsId)");
@@ -128,6 +126,10 @@ class TrainingSession
      */
     private function isConnectedToUser(): bool
     {
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
+        }
+
         try {
             $stmt = self::$pdo->prepare("SELECT count(*) FROM users2trainingsession WHERE usersID = :usersId and tsID = :tsId");
             $stmt->execute([
@@ -156,9 +158,6 @@ class TrainingSession
         $ts = self::getTrainingSessionByName(name: $name);
 
         if ($ts == null) {
-            if (error_reporting() & E_ALL) {
-                echo 'Trainingsession does not exist - Returning true </br>';
-            }
             return false;
         }
 
@@ -173,13 +172,7 @@ class TrainingSession
      */
     public static function getTrainingSessionById(int $id): ?TrainingSession
     {
-        // read all training sessions
-        //$ts = new (TrainingSession);
-        if (self::$pdo === null) {
-            throw new \Exception('PDO connection not initialized. Call TrainingSession::initPDO() first.');
-        }
-
-        $ts = self::getAllTrainingsessions();
+        $ts = self::getAllTrainingSessions();
 
         if ($ts === null) {
             return null;
@@ -199,7 +192,11 @@ class TrainingSession
      */
     public static function getTrainingSessionByName(string $name): ?TrainingSession
     {
-        $ts = self::getAllTrainingsessions();
+        if (self::$pdo === null) {
+            self::$pdo = DBConnection::getInstance();
+        }
+
+        $ts = self::getAllTrainingSessions();
 
         if ($ts === null) {
             return null;
@@ -216,15 +213,49 @@ class TrainingSession
     /**
      * @return TrainingSession[]
      */
-    public static function getAllTrainingsessions(): ?array
+    public static function getAllTrainingSessions(): ?array
     {
         if (self::$pdo === null) {
-            throw new \Exception('PDO connection not initialized. Call TrainingSession::initPDO() first.');
+            self::$pdo = DBConnection::getInstance();
+            //throw new \Exception('PDO connection not initialized. Call TrainingSession::initPDO() first.');
         }
         try {
             $stmt = self::$pdo->prepare("SELECT tsID, tsName, tsDesc FROM trainingsession");
             $stmt->execute();
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $trainingSessions = [];
+            foreach ($results as $row) {
+                $trainingSessions[] = new TrainingSession(tsId: $row['tsID'], tsName: $row['tsName'], tsDesc: $row['tsDesc']);
+            }
+
+            return $trainingSessions;
+        } catch (PDOException $ex) {
+            if (error_reporting() & E_ALL) {
+                echo 'Encountered error while reading all TrainingSessions ' . $ex->getMessage();
+            }
+
+            return null;
+        }
+    }
+
+    /**
+     * @return TrainingSession[]
+     */
+    public static function getCurrentUsersTrainingSessions(): ?array
+    {
+        if (self::$pdo === null) {
+            // establish Database Connection
+            self::$pdo = DBConnection::getInstance();
+        }
+
+        try {
+            $stmt = self::$pdo->prepare("SELECT ts.tsID, ts.tsName, ts.tsDesc FROM trainingsession ts LEFT JOIN users2trainingsession uts ON ts.tsID = uts.tsId AND uts.usersID = :usersId");
+            $stmt->execute([
+                ':usersId' => $_SESSION['userId']
+            ]);
+
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // echo ' Current Users TrainingSessions' . count($results);
             $trainingSessions = [];
             foreach ($results as $row) {
                 $trainingSessions[] = new TrainingSession(tsId: $row['tsID'], tsName: $row['tsName'], tsDesc: $row['tsDesc']);
