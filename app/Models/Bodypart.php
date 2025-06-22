@@ -15,6 +15,13 @@ class Bodypart
     public ?int $bodypartId;
     public ?string $bodypartName;
     public ?string $bodypartDesc;
+
+    // Initialize static PDO from singleton DBConnection
+    public static function initDB(): void
+    {
+        self::$pdo = DBConnection::getInstance();
+    }
+
     // constructor
     public function __construct(?int $bodypartId = null, ?string $bodypartName = null, ?string $bodypartDesc = null)
     {
