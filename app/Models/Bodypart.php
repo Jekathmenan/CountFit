@@ -100,6 +100,24 @@ class Bodypart
             throw $ex;
         }
     }
+
+    /**
+     * 
+     * Helper function to bind current trainingSessionToSession
+     * 
+     */
+    private function bindThisBodyPart(string $name): bool
+    {
+        $bp = self::getBodypartByName(name: $name);
+
+        if ($bp == null) {
+            return false;
+        }
+
+        $this->bodypartId = $bp->bodypartId;
+        return !($bp === null);
+    }
+
     /**
      * 
      * Returns Bodypart by name
